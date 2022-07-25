@@ -19,7 +19,8 @@ jobs:
 
       # Runs a single command using the runners shell
       - name: backend testing
-        run: mvn clean test "-Dkarate.options=--tags @debug"
+        run: mvn test 
+    # mvn clean test "-Dkarate.options=--tags @debug"
 
       # Runs a set of commands using the runners shell
       - name: Run a multi-line script
