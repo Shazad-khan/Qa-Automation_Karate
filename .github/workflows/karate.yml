@@ -1,0 +1,38 @@
+name: ci-mvn-build
+
+on:
+  push:
+    branches: [ master ]
+  schedule:
+    - cron:  '0 0 * * 1-5'
+  
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: git checkout
+        uses: actions/checkout@v2
+      - name: set up jdk 11
+        uses: actions/setup-java@v2
+        with:
+          distribution: adopt
+          java-version: 11
+      - name: cache maven 
+        uses: actions/cache@v1
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+      - name: Run a one-line script
+        run: echo Starting the API testing!
+      - name: test execution
+        run: mvn --batch-mode clean test -DCLIENT_ID=${{ secrets.CLIENT_ID }} -DM_SCOPE=${{ secrets.M_SCOPE }} -DMG_SCOPE=${{ secrets.MG_SCOPE }} -DCLIENT_SECRET=${{ secrets.CLIENT_SECRET }} -DTENANT=${{ secrets.TENANT }}
+     - name: Karate DSL Test Reports
+        uses: actions/upload-artifact@v2
+        if: ${{ always() }}
+        with:
+          name: Test Reports
+          path: | 
+            ./target/karate-reports/
+            ./target/karate.log
