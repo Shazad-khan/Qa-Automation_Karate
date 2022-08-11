@@ -28,7 +28,7 @@ jobs:
         run: echo Starting the API testing!
       - name: test execution
         run: mvn --batch-mode clean test -DCLIENT_ID=${{ secrets.CLIENT_ID }} -DM_SCOPE=${{ secrets.M_SCOPE }} -DMG_SCOPE=${{ secrets.MG_SCOPE }} -DCLIENT_SECRET=${{ secrets.CLIENT_SECRET }} -DTENANT=${{ secrets.TENANT }}
-     - name: Karate DSL Test Reports
+      - name: Karate DSL Test Reports
         uses: actions/upload-artifact@v2
         if: ${{ always() }}
         with:
