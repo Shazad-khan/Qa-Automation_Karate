@@ -37,8 +37,8 @@ jobs:
             -u USER_EMAIL \
             -p PASSWORD \
             parse_junit \
-            --title "Automated Tests from GitHub workflow" \
-            --run-description ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }} \
+            --title "Automated Tests from GitHub workflowc" \
+            --run-description ${{ github.server_url }}/${{ github.repository }}/actions/runs/tree/master/target/karate-reports/
             -f "karate-summary.html"
     
 
