@@ -39,6 +39,6 @@ jobs:
             parse_junit \
             --title "Automated Tests from GitHub workflow" \
             --run-description ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }} \
-            -f "https://github.com/Shazad-khan/Qa-Automation_Karate/blob/master/target/karate-reports/karate-summary.html"
+            -f "karate-summary.html"
     
 
