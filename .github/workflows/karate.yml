@@ -1,38 +1,29 @@
-name: ci-mvn-build
-
-on:
-  push:
-    branches: [ master ]
-  schedule:
-    - cron:  '0 0 * * 1-5'
-  
+name: send-Karate-results-to-testrail
+on: [workflow_dispatch]
 jobs:
-  build:
+  send-test-results-to-testrail:
     runs-on: ubuntu-latest
     steps:
-      - name: git checkout
-        uses: actions/checkout@v2
-      - name: set up jdk 11
-        uses: actions/setup-java@v2
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Execute automated tests
+        uses: actions/checkout@v3
+      - name: Python setup
+        if: always()
+        uses: actions/setup-python@v3
         with:
-          distribution: adopt
-          java-version: 11
-      - name: cache maven 
-        uses: actions/cache@v1
-        with:
-          path: ~/.m2/repository
-          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            ${{ runner.os }}-maven-
-      - name: Run a one-line script
-        run: echo Starting the API testing!
-      - name: test execution
-        run: mvn --batch-mode clean test -DCLIENT_ID=${{ secrets.CLIENT_ID }} -DM_SCOPE=${{ secrets.M_SCOPE }} -DMG_SCOPE=${{ secrets.MG_SCOPE }} -DCLIENT_SECRET=${{ secrets.CLIENT_SECRET }} -DTENANT=${{ secrets.TENANT }}
-      - name: Karate DSL Test Reports
-        uses: actions/upload-artifact@v2
-        if: ${{ always() }}
-        with:
-          name: Test Reports
-          path: | 
-            ./target/karate-reports/
-            ./target/karate.log
+          python-version: '3.x'
+      - name: TestRail CLI upload results
+        if: always()
+        run: |
+          mvn test
+          pip install trcli
+          trcli -y \
+            -h https://TESTRAIL_INSTANCE.testrail.io/ \
+            --project "PROJECT NAME" \
+            -u USER_EMAIL \
+            -p PASSWORD \
+            parse_junit \
+            --title "Automated Tests from GitHub workflow" \
+            --run-description ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }} \
+            -f "karate-summary.html"
