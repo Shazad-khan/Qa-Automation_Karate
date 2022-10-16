@@ -19,26 +19,9 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-      - name: Execute automated tests 
-        uses: actions/checkout@v3
-      - name: Python setup
-        if: always()
-        uses: actions/setup-python@v3
-        with:
-          python-version: '3.x'
       - name: TestRail CLI upload results
         if: always()
         run: |
           mvn test
-          pip install trcli
-          trcli -y \
-            -h https://shazadzemosolabs.testrail.io/ \
-            --project "Amazon Login" \
-            -u shazad.khan@zemosolabs.com \
-            -p Shazad.Khan@123 \
-            parse_junit \
-            --title "Automated Tests from GitHub workflowc" \
-            --run-description ${{ github.server_url }}/${{ github.repository }}/actions/runs/tree/master/target/karate-reports/
-            -f "karate-summary.html"
     
 
